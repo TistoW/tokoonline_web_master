@@ -29,6 +29,10 @@ class CreateTransaksisTable extends Migration
             $table->string('detail_lokasi')->nullable();
             $table->string('deskripsi')->nullable();
             $table->string('metode')->nullable();
+            $table->string('jasa_pengiriaman');
+            $table->integer('ongkir')->unsigned();
+            $table->bigInteger('total_transfer')->unsigned();
+            $table->string('bank');
             $table->timestamp('expired_at')->nullable();
             $table->timestamps();
         });
