@@ -44,7 +44,7 @@ class UserController extends Controller {
         }
 
         $user = User::create(array_merge($requset->all(), [
-            'password' => bcrypt($requset->password)
+            'password' => bcrypt($requset->Password)
         ]));
 
         if ($user) {

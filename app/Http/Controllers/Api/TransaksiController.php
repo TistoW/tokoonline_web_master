@@ -88,19 +88,19 @@ class TransaksiController extends Controller {
                 'transaksis' => collect($transaksis)
             ]);
         } else {
-            $this->error('Transaksi gagal');
+            return $this->error('Transaksi gagal');
         }
     }
 
-    public function batal($id){
+    public function batal($id) {
         $transaksi = Transaksi::with(['details.produk', 'user'])->where('id', $id)->first();
-        if ($transaksi){
+        if ($transaksi) {
             // update data
 
             $transaksi->update([
                 'status' => "BATAL"
             ]);
-            $this->pushNotif('Transaksi Dibatalkan', "Transasi produk ".$transaksi->details[0]->produk->name." berhsil dibatalkan", $transaksi->user->fcm);
+            $this->pushNotif('Transaksi Dibatalkan', "Transasi produk " . $transaksi->details[0]->produk->name . " berhsil dibatalkan", $transaksi->user->fcm);
 
             return response()->json([
                 'success' => 1,
@@ -153,6 +153,36 @@ class TransaksiController extends Controller {
             'firebase_response' => json_decode($response)
         ];
         return $data;
+    }
+
+    public function upload(Request $request, $id) {
+        $transaksi = Transaksi::with(['details.produk', 'user'])->where('id', $id)->first();
+        if ($transaksi) {
+            // update data
+
+            $fileName = '';
+            if ($request->image->getClientOriginalName()) {
+                $file = str_replace(' ', '', $request->image->getClientOriginalName());
+                $fileName = date('mYdHs') . rand(1, 999) . '_' . $file;
+                $request->image->storeAs('public/transfer', $fileName);
+            } else {
+                return $this->error('Gagal memuat data');
+            }
+
+            $transaksi->update([
+                'status' => "DIBAYAR",
+                'buktiTransfer' => $fileName
+            ]);
+            $this->pushNotif('Transaksi Dibayar', "Transasi produk " . $transaksi->details[0]->produk->name . " berhsil Dibayar", $transaksi->user->fcm);
+
+            return response()->json([
+                'success' => 1,
+                'message' => 'Berhasil',
+                'transaksi' => $transaksi
+            ]);
+        } else {
+            return $this->error('Gagal memuat transaksi');
+        }
     }
 
     public function error($pasan) {

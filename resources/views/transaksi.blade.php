@@ -79,6 +79,7 @@
                             <th>Total</th>
                             <th>Bank</th>
                             <th>Status</th>
+                            <th>Bukti Transfer</th>
                             <th style="width: 140px">Action</th>
                         </tr>
                         </thead>
@@ -89,10 +90,16 @@
                                 <td>{{"Rp.".number_format($data->total_transfer)}}</td>
                                 <td>{{ $data->bank }}</td>
                                 <td>{{ $data->status}}</td>
+                                <td><a href="{{ asset('public/storage/transfer/'.$data->buktiTransfer) }}" target="_blank">Lihat Bukti Transfer</a></td>
                                 <td>
                                     @if($data->status == "DIKIRIM")
                                         <a href="{{ route('transaksiSelesai', $data->id) }}">
                                             <button type="button" class="btn btn-block btn-primary btn-xs">Selesai
+                                            </button>
+                                        </a>
+                                    @elseif($data->status == "DIBAYAR")
+                                        <a href="{{ route('transaksiConfirm', $data->id) }}">
+                                            <button type="button" class="btn btn-block btn-info btn-xs">Proses
                                             </button>
                                         </a>
                                     @elseif($data->status == "PROSES")
